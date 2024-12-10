@@ -100,10 +100,10 @@ def nelder_mead(
     no_improv_break=20,
     max_iter=1000,
     # Standard Nelder-Mead parameters
-    delta_e=2.0,   # expansion coefficient
+    delta_e=2.0,  # expansion coefficient
     delta_oc=0.5,  # outside contraction coefficient
     delta_ic=0.5,  # inside contraction coefficient
-    gamma=0.5,     # shrink coefficient
+    gamma=0.5,  # shrink coefficient
     verbose=False,
 ):
     simplex, scores = initialize_simplex(f, x_start, step, verbose)
@@ -146,7 +146,12 @@ def nelder_mead(
         )
 
         # Evaluate candidates in parallel
-        candidate_keys = ["reflection", "expansion", "outside_contraction", "inside_contraction"]
+        candidate_keys = [
+            "reflection",
+            "expansion",
+            "outside_contraction",
+            "inside_contraction",
+        ]
         candidate_values = [candidates[key] for key in candidate_keys]
 
         with concurrent.futures.ProcessPoolExecutor() as executor:
@@ -210,85 +215,4 @@ def nelder_mead(
 
 
 if __name__ == "__main__":
-    # Example test with a simple quadratic function
-    # def test_func(x):
-    #     return (x[0]-1)**2 + (x[1]-2)**2
-    #
-    # x_start = np.array([0.0, 0.0])
-    # solution, fval = nelder_mead(test_func, x_start, step=0.1, no_improve_thr=1e-2, no_improv_break=20, max_iter=30)
-    # print("Custom Nelder-Mead result:", solution, fval)
-    #
-    # # Optional: Compare with SciPy
-    from scipy.optimize import minimize
-    # res_scipy = minimize(test_func, x_start, method='Nelder-Mead', options={'xatol':1e-6,'fatol':1e-6,'maxiter':200})
-    # print("SciPy Nelder-Mead result:", res_scipy.x, res_scipy.fun)
-
-    from scipy.interpolate import CubicSpline
-    # Input array
-    data = np.array([
-        6639.760432, 6630.030656, 6683.882368, 6710.01992, 6756.042432, 6770.463392,
-        6775.104576, 6746.00155786, 7085.704416, 7912.288048, 8112.597168, 8305.77832,
-        8271.73552, 8307.24836795, 8206.68608, 7793.14818672, 8206.68608,
-        8307.24836795, 8271.73552, 8305.77832, 8112.597168, 7912.288048, 7085.704416,
-        6746.00155786, 6775.104576, 6770.463392, 6756.042432, 6710.01992, 6683.882368,
-        6630.030656, 6639.760432
-    ])
-
-    # Correct x range and step
-    x = np.arange(-1.5, 1.6, 0.1)
-    if len(data) > len(x):
-        data = data[:len(x)]
-
-    # Generate cubic spline
-    spline = CubicSpline(x, data)
-
-    a = 0
-
-    from random import randint
-    from time import sleep
-
-    # Objective function adjusted for domain
-    def objective(x):
-        global a
-        a += 1
-
-        t = randint(1, 5)
-        print("sleeping: ", t)
-        sleep(t)
-        if np.any(x < -1.5) or np.any(x > 1.5):  # Ensure x is within spline domain
-            return np.array([1e9])
-        return spline(x)
-
-
-    # Custom Nelder-Mead implementation (paste the full implementation provided previously)
-
-    # Test Nelder-Mead on the objective function
-    # x_start = np.array([0.6])  # Starting point
-    x_start = np.array([0.375])  # Starting point
-    # x_start = np.array([1.45])  # Starting point
-
-    # Run custom Nelder-Mead
-    solution, fval = nelder_mead(
-        objective,
-        x_start=x_start,
-        step=0.1,  # Larger initial step
-        no_improve_thr=1,  # Loose improvement threshold
-        no_improv_break=5,  # Fewer iterations without improvement
-        max_iter=50,  # Overall iteration cap (optional)
-        delta_e=1.5,  # Conservative expansion
-        delta_oc=0.6,  # Slightly higher contraction
-        delta_ic=0.6,  # Slightly higher contraction
-        gamma=0.7,  # Less aggressive shrinking
-        verbose=True
-    )
-
-    # Compare with SciPy Nelder-Mead
-    # res_scipy = minimize(objective, x_start, method='Nelder-Mead',
-    #                      options={'xatol': 1e-6, 'fatol': 1e-6, 'maxiter': 200})
-
-    print(a)
-    # Print results
-    print("Custom Nelder-Mead Result:")
-    print("Solution:", solution, "Function Value:", fval)
-    # print("SciPy Nelder-Mead Result:")
-    # print("Solution:", res_scipy.x, "Function Value:", res_scipy.fun)
+    pass
