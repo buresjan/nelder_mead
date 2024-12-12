@@ -8,16 +8,25 @@ def initialize_simplex(f, x_start, step, verbose):
     """
     dim = len(x_start)
     simplex = [x_start]
-    scores = [f(x_start)]
 
+    # Generate simplex points
     for i in range(dim):
         x = np.copy(x_start)
         x[i] += step
         simplex.append(x)
-        scores.append(f(x))
 
     simplex = np.array(simplex)
-    scores = np.array(scores)
+
+    # Evaluate scores in parallel
+    scores = np.empty(len(simplex))
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        future_to_index = {
+            executor.submit(f, simplex[i]): i
+            for i in range(len(simplex))
+        }
+        for future in concurrent.futures.as_completed(future_to_index):
+            index = future_to_index[future]
+            scores[index] = future.result()
 
     if verbose:
         print(f"Initialized simplex shape: {simplex.shape}")
