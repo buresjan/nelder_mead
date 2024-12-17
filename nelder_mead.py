@@ -2,6 +2,7 @@ import numpy as np
 import concurrent.futures
 import os
 
+
 def initialize_simplex(f, x_start, step, verbose):
     """
     Generate the initial simplex around the starting point.
@@ -21,8 +22,7 @@ def initialize_simplex(f, x_start, step, verbose):
     scores = np.empty(len(simplex))
     with concurrent.futures.ProcessPoolExecutor() as executor:
         future_to_index = {
-            executor.submit(f, simplex[i]): i
-            for i in range(len(simplex))
+            executor.submit(f, simplex[i]): i for i in range(len(simplex))
         }
         for future in concurrent.futures.as_completed(future_to_index):
             index = future_to_index[future]
