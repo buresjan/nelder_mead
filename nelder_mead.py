@@ -1,6 +1,6 @@
 import numpy as np
 import concurrent.futures
-
+import os
 
 def initialize_simplex(f, x_start, step, verbose):
     """
@@ -105,7 +105,15 @@ def nelder_mead(
     delta_ic=0.5,  # inside contraction coefficient
     gamma=0.5,  # shrink coefficient
     verbose=False,
+    log=False,
 ):
+    log_file = "log.txt"
+    if log:
+        if os.path.exists(log_file):
+            os.remove(log_file)
+        with open(log_file, "w") as f_log:
+            f_log.write("Iteration\tBest Estimate\tCurrent Location\n")
+
     simplex, scores = initialize_simplex(f, x_start, step, verbose)
     prev_best = scores[0]
     no_improv = 0
@@ -115,6 +123,10 @@ def nelder_mead(
         # Order simplex by score
         simplex, scores = order_simplex(simplex, scores)
         best = scores[0]
+
+        if log:
+            with open(log_file, "a") as f_log:
+                f_log.write(f"{iter_count}\t{best:.6f}\t{simplex[0]}\n")
 
         # Verbose output
         if verbose:
