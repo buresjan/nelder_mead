@@ -29,7 +29,7 @@ if __name__ == "__main__":
         "no_improve_thr": 1e-6,
         "no_improv_break": 50,
         "max_iter": 200,
-        "verbose": True,
+        "verbose": False,
     }
 
     # Run the custom Nelder-Mead optimizer

@@ -127,8 +127,16 @@ def nelder_mead(
     prev_best = scores[0]
     no_improv = 0
     iter_count = 0
+    best = scores[0]
 
     while True:
+        # Check stopping criteria
+        if iter_count:
+            if max_iter and iter_count >= max_iter:
+                return simplex[0], best
+            if no_improv >= no_improv_break:
+                return simplex[0], best
+
         # Order simplex by score
         simplex, scores = order_simplex(simplex, scores)
         best = scores[0]
@@ -144,12 +152,6 @@ def nelder_mead(
                 f"Function value = {best}, "
                 f"Simplex: {simplex}"
             )
-
-        # Check stopping criteria
-        if max_iter and iter_count >= max_iter:
-            return simplex[0], best
-        if no_improv >= no_improv_break:
-            return simplex[0], best
 
         iter_count += 1
         if best < prev_best - no_improve_thr:
