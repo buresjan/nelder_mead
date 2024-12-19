@@ -117,7 +117,8 @@ def nelder_mead(
     log=False,
 ):
     if not isinstance(step, list):
-        step = [step]
+        # If uniform step is provided for all dimensions.
+        step = [step] * len(x_start)
 
     log_file = "log.txt"
     if log:
