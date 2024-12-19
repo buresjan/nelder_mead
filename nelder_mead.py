@@ -13,7 +13,7 @@ def initialize_simplex(f, x_start, step, verbose):
     # Generate simplex points
     for i in range(dim):
         x = np.copy(x_start)
-        x[i] += step
+        x[i] += step[i]
         simplex.append(x)
 
     simplex = np.array(simplex)
@@ -116,6 +116,9 @@ def nelder_mead(
     verbose=False,
     log=False,
 ):
+    if not isinstance(step, list):
+        step = [step]
+
     log_file = "log.txt"
     if log:
         if os.path.exists(log_file):
